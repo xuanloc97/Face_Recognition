@@ -128,7 +128,9 @@ input_name = ort_session.get_inputs()[0].name
 shape_predictor = dlib.shape_predictor('models/facial_landmarks/shape_predictor_5_face_landmarks.dat')
 fa = face_utils.facealigner.FaceAligner(shape_predictor, desiredFaceWidth=112, desiredLeftEye=(0.3, 0.3))
 
-threshold = 0.63
+# threshold = 0.63
+threshold = 0.4
+
 
 # load distance
 with open("embeddings/embeddings.pkl", "rb") as f:
@@ -160,6 +162,7 @@ with tf.Graph().as_default():
             img = np.transpose(img, [2, 0, 1])
             img = np.expand_dims(img, axis=0)
             img = img.astype(np.float32)
+
 
             # detect faces
             confidences, boxes = ort_session.run(None, {input_name: img})
@@ -194,6 +197,10 @@ with tf.Graph().as_default():
                     diff = np.subtract(saved_embeds, embedding)
                     dist = np.sum(np.square(diff), 1)
                     idx = np.argmin(dist)
+                    # cv2.rectangle(frame, (x1, y1), (x2, y2), (80,18,236), 2)
+                    # font = cv2.FONT_HERSHEY_DUPLEX
+                    # cv2.putText(frame, dist[idx], (x1 + 6,y2 - 6), font, 0.3, (255, 255, 255), 1)
+                    print(dist[idx])
                     if dist[idx] < threshold:
                         predictions.append(names[idx])
                     else:
@@ -203,14 +210,15 @@ with tf.Graph().as_default():
                 for i in range(boxes.shape[0]):
                     box = boxes[i, :]
 
-                    text = f"{predictions[i]}"
+                    # text = f"{predictions[i]}"
+                    text = str(predictions[i])
 
                     x1, y1, x2, y2 = box
                     cv2.rectangle(frame, (x1, y1), (x2, y2), (80,18,236), 2)
                     # Draw a label with a name below the face
                     cv2.rectangle(frame, (x1, y2 - 20), (x2, y2), (80,18,236), cv2.FILLED)
                     font = cv2.FONT_HERSHEY_DUPLEX
-                    cv2.putText(frame, text, (x1 + 6, y2 - 6), font, 0.3, (255, 255, 255), 1)
+                    cv2.putText(frame, text, (x1 + 6, y2 - 6), font, 0.3, (255, 255, 255), 2)
 
             cv2.imshow('Video', frame)
 

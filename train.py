@@ -176,11 +176,14 @@ for label in dirs:
             if frame_count == cap.get(cv2.CAP_PROP_FRAME_COUNT):
                 break
 
+
 with tf.Graph().as_default():
     with tf.Session() as sess:
         print("loading checkpoint ...")
         saver = tf.train.import_meta_graph('models/mfn/m1/mfn.ckpt.meta')
-        saver.restore(sess, 'models/mfn/m1/mfn.ckpt')
+        # checkpoint = tf.train.latest_checkpoint(FLAGS.checkpoint)
+        # saver.restore(sess, checkpoint)
+        saver.restore(sess,'models/mfn/m1/mfn.ckpt')
 
         images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
         embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
