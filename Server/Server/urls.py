@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from AppRecognition.views import  index, simple_upload
+from AppRecognition.views import  index, simple_upload, video_feed
 from django.conf.urls import url
 ###
 from django.conf import settings
@@ -23,7 +23,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     url('AppRecognition/',index,name = "home"),
     url('admin/', admin.site.urls),
-    url('load/',simple_upload)
+    url('load/',simple_upload),
+    url('recogn/',video_feed),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

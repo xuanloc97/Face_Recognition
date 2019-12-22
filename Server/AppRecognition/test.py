@@ -220,7 +220,10 @@ def main():
                         font = cv2.FONT_HERSHEY_DUPLEX
                         cv2.putText(frame, text, (x1 + 6, y2 - 6), font, 0.3, (255, 255, 255), 2)
 
-                cv2.imshow('Video', frame)
+                # cv2.imshow('Video', frame)
+                cv2.imwrite('demo.jpg', frame)
+                yield (b'--frame\r\n'
+                       b'Content-Type: image/jpeg\r\n\r\n' + open('demo.jpg', 'rb').read() + b'\r\n')
 
                 # Hit 'q' on the keyboard to quit!
                 if cv2.waitKey(1) & 0xFF == ord('q'):
