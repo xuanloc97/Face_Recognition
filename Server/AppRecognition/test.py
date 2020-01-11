@@ -120,13 +120,13 @@ def main():
         picked_box_probs[:, 3] *= height
         return picked_box_probs[:, :4].astype(np.int32), np.array(picked_labels), picked_box_probs[:, 4]
 
-    onnx_path = '/home/loc/XUANLOC/face_recognition-master/Server/AppRecognition/models/ultra_light/ultra_light_models/ultra_light_640.onnx'
+    onnx_path = '/home/loc/XUANLOC/PROJECT/Face_Recognition/Server/AppRecognition/models/ultra_light/ultra_light_models/ultra_light_640.onnx'
     onnx_model = onnx.load(onnx_path)
     predictor = prepare(onnx_model)
     ort_session = ort.InferenceSession(onnx_path)
     input_name = ort_session.get_inputs()[0].name
 
-    shape_predictor = dlib.shape_predictor('/home/loc/XUANLOC/face_recognition-master/Server/AppRecognition/models/facial_landmarks/shape_predictor_5_face_landmarks.dat')
+    shape_predictor = dlib.shape_predictor('/home/loc/XUANLOC/PROJECT/Face_Recognition/Server/AppRecognition/models/facial_landmarks/shape_predictor_5_face_landmarks.dat')
     fa = face_utils.facealigner.FaceAligner(shape_predictor, desiredFaceWidth=112, desiredLeftEye=(0.3, 0.3))
 
     # threshold = 0.63
@@ -134,14 +134,14 @@ def main():
 
 
     # load distance
-    with open("/home/loc/XUANLOC/face_recognition-master/Server/AppRecognition/embeddings/embeddings.pkl", "rb") as f:
+    with open("/home/loc/XUANLOC/PROJECT/Face_Recognition/Server/AppRecognition/embeddings/embeddings.pkl", "rb") as f:
         (saved_embeds, names) = pickle.load(f)
 
     with tf.Graph().as_default():
         with tf.Session() as sess:
 
-            saver = tf.train.import_meta_graph('/home/loc/XUANLOC/face_recognition-master/Server/AppRecognition/models/mfn/m1/mfn.ckpt.meta')
-            saver.restore(sess, '/home/loc/XUANLOC/face_recognition-master/Server/AppRecognition/models/mfn/m1/mfn.ckpt')
+            saver = tf.train.import_meta_graph('/home/loc/XUANLOC/PROJECT/Face_Recognition/Server/AppRecognition/models/mfn/m1/mfn.ckpt.meta')
+            saver.restore(sess, '/home/loc/XUANLOC/PROJECT/Face_Recognition/Server/AppRecognition/models/mfn/m1/mfn.ckpt')
 
             images_placeholder = tf.get_default_graph().get_tensor_by_name("input:0")
             embeddings = tf.get_default_graph().get_tensor_by_name("embeddings:0")
@@ -220,10 +220,10 @@ def main():
                         font = cv2.FONT_HERSHEY_DUPLEX
                         cv2.putText(frame, text, (x1 + 6, y2 - 6), font, 0.3, (255, 255, 255), 2)
 
-                # cv2.imshow('Video', frame)
-                cv2.imwrite('demo.jpg', frame)
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + open('demo.jpg', 'rb').read() + b'\r\n')
+                cv2.imshow('Video', frame)
+                # cv2.imwrite('demo.jpg', frame)
+                # yield (b'--frame\r\n'
+                #        b'Content-Type: image/jpeg\r\n\r\n' + open('demo.jpg', 'rb').read() + b'\r\n')
 
                 # Hit 'q' on the keyboard to quit!
                 if cv2.waitKey(1) & 0xFF == ord('q'):
